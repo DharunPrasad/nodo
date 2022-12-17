@@ -3,66 +3,33 @@ const app = express();
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 
-//models
-const TodoTask = require("./models/todoTask");
+const {getTodo, createTodo, updateGetTodo, updateTodo, deleteTodo} = require("./controllers/todoController")
 
+//To access .env file
 dotenv.config();
 
+//To serve static files like ejs
 app.use("/static", express.static("public"));
 
+//Access view engine
 app.set("view engine", "ejs");
+
 
 app.use(express.urlencoded({ extended: true }));
 
-// GET METHOD
-app.get("/", (req, res) => {
-  TodoTask.find({}, (err, tasks) => {
-    res.render("todo.ejs", { todoTasks: tasks });
-  });
-});
+app.get("/",getTodo);
 
-//POST METHOD
-app.post("/", async (req, res) => {
-  // const todoTask = new TodoTask({
-  //   content: req.body.content,
-  // });
-  try {
-    await TodoTask.create(req.body);
-    res.redirect("/");
-  } catch (err) {
-    res.redirect("/");
-  }
-});
+app.post("/", createTodo);
 
-//UPDATE
 app
   .route("/edit/:id")
-  .get((req, res) => {
-    const id = req.params.id;
-    TodoTask.find({}, (err, tasks) => {
-      res.render("todoEdit.ejs", { todoTasks: tasks, idTask: id });
-    });
-  })
-  .post((req, res) => {
-    const id = req.params.id;
-    TodoTask.findByIdAndUpdate(id, { content: req.body.content }, (err) => {
-      if (err) return res.send(500, err);
-      res.redirect("/");
-    });
-  });
+  .get(updateGetTodo)
+  .post(updateTodo);
 
-//DELETE
-app.route("/remove/:id").get((req, res) => {
-  const id = req.params.id;
-  TodoTask.findByIdAndRemove(id, err => {
-    if (err) {
-      return res.send(500, err);
-    }
-    res.redirect("/");
-  });
-});
-mongoose.set('strictQuery', true);
+app.route("/remove/:id").get(deleteTodo);
+
 //connection to db
+mongoose.set('strictQuery', true);
 mongoose.connect(process.env.DB_CONNECT).then(() => {
-  app.listen(3000, "0.0.0.0" ,() => console.log("Server Up and running"));
+  app.listen(8000, "0.0.0.0" ,() => console.log("Server Up and running"));
 });
