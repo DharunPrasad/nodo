@@ -32,5 +32,5 @@ const port = process.env.PORT
 //connection to db
 mongoose.set('strictQuery', true);
 mongoose.connect(process.env.DB_CONNECT).then(() => {
-  app.listen(PORT ,() => console.log("Server Up and running"));
+  app.listen(port ,() => console.log("Server Up and running"));
 });
