@@ -28,8 +28,9 @@ app
 
 app.route("/remove/:id").get(deleteTodo);
 
+const port = process.env.PORT
 //connection to db
 mongoose.set('strictQuery', true);
 mongoose.connect(process.env.DB_CONNECT).then(() => {
-  app.listen(8000, "0.0.0.0" ,() => console.log("Server Up and running"));
+  app.listen(PORT ,() => console.log("Server Up and running"));
 });
